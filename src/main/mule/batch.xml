@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2eb3535d-cc97-4df1-8edc-5a26bd160da6" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="871ef4b7-5e4d-445c-8a55-b1e653c42c2b" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="country" />
+	</db:config>
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="817b893c-9da0-4c91-9db8-73a60ea68370" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="country" />
+	</db:config>
+	<db:config name="Database_Config2" doc:name="Database Config" doc:id="6048652b-a298-4b83-92ee-ff6ec3a981c4" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="country" />
+	</db:config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="da64b5ad-fbc9-449f-ae7d-2ba488d7cd6f" >
+		<file:connection workingDir="C:\Users\91974\OneDrive\Desktop\emp\failure" />
+	</file:config>
+	<file:config name="File_Config1" doc:name="File Config" doc:id="90e33b46-eef3-46d5-a025-238770c184a0" >
+		<file:connection workingDir="C:\Users\91974\OneDrive\Desktop\emp\status" />
+	</file:config>
+	<flow name="batchFlow" doc:id="fc18961c-c575-492f-8134-4ae5362d041b" >
+		<http:listener doc:name="Listener" doc:id="ea244f50-bca3-4f50-8673-5e139f81aad2" config-ref="HTTP_Listener_config" path="db"/>
+		<ee:transform doc:name="Transform Message" doc:id="bd6f0e55-de48-4e46-ac17-3ca3d415321d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+1 to 30 map {
+	EmpId : if($$==7 or $$==12) 'ABC' else 1000 + $$,
+	EmpName : 'Hima' ++ $$,
+	EmpDesignation : 'software' 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="batchBatch_Job" doc:id="5fb4999a-4304-4c5c-85e7-7f1bea5fec9b" maxFailedRecords="-1">
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="47c0cd56-cde6-4ba8-a9fa-6673f896eb37" acceptExpression="-1">
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="798fd2f4-1393-47db-82d1-97a24f5f2dc8" size="3">
+						<db:bulk-insert doc:name="Bulk insert" doc:id="8f6264e0-421b-4ee2-955f-573774c7e3d7" config-ref="Database_Config2">
+							<db:sql ><![CDATA[INSERT INTO country.employee (EmpId,EmpName,EmpDesignation) VALUES (:EmpId, :EmpName, :EmpDesignation);]]></db:sql>
+						</db:bulk-insert>
+					</batch:aggregator>
+				</batch:step>
+				<batch:step name="Batch_Step1" doc:id="08cd8423-9142-4059-b08e-2cad425f4c72" acceptPolicy="ONLY_FAILURES">
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="646128f6-2ceb-43ac-812f-cb52704764a0" size="3">
+						<logger level="INFO" doc:name="Logger" doc:id="d7ec2a23-391e-4fab-8781-e180a947a827" message="failure loggs::#[payload]"/>
+						<ee:transform doc:name="Transform Message" doc:id="7a259f79-9f3c-4b5d-a3f0-94e5611e55ff" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<file:write doc:name="Write" doc:id="55df42e1-9f06-41e5-a461-3a1f0cd261a1" config-ref="File_Config" path="C:\Users\91974\OneDrive\Desktop\emp\status\failure.json"/>
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<ee:transform doc:name="Transform Message" doc:id="b99ab422-87e3-4beb-988e-af0e1f746977" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="ce31d70e-82b9-400b-9688-0425d233b71d" message="#[payload]" />
+				<file:write doc:name="Write" doc:id="2b1afe9d-f545-433e-8922-14e7ffa9230a" config-ref="File_Config1" path="C:\Users\91974\OneDrive\Desktop\emp\status\status.json"/>
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+</mule>

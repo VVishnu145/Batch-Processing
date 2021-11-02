@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="employee" format="json">
+      <types:shape format="weave" example="examples/emp2.json"><![CDATA[%dw 2.0
+
+type employee = Array<{|  EmpId: Number {"typeId": "int"},   EmpName: String,   EmpDesgination: String|} | Null> {"example": "[{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":45,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},{\\\"EmpId\\\":47,\\\"EmpName\\\":\\\"vishnu\\\",\\\"EmpDesgination\\\":\\\"sr\\\"},null]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#bd6f0e55-de48-4e46-ac17-3ca3d415321d">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="employee"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
